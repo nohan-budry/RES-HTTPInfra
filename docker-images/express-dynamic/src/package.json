@@ -1,0 +1,28 @@
+{
+    "name": "adventurers",
+    "version": "1.0.0",
+    "description": "RES 2019 - Lab HTTPInfra - Step 2",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Jack-Eri/RES-HTTPInfra.git"
+    },
+    "author": "Nohan budry, Andrés Moreno",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Jack-Eri/RES-HTTPInfra/issues"
+    },
+    "homepage": "https://github.com/Jack-Eri/RES-HTTPInfra#readme",
+    "dependencies": {
+        "chance": "^1.0.18",
+        "express": "^4.17.0"
+    },
+    "devDependencies": {
+        "eslint": "^5.16.0"
+    }
+}
