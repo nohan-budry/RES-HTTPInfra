@@ -1,5 +1,6 @@
 const express = require('express');
 const Chance = require('chance');
+const ip = require('ip');
 
 class Pet {
     constructor(type) {
@@ -45,6 +46,17 @@ app.get('/adventurers/:id', (req, res) => {
     }
 
     res.send(JSON.stringify(new Adventurer(id)));
+});
+
+// Page showing load balancing with round robin
+app.get('/keeper', (req, res) => {
+    var keeper = new Adventurer(Number(ip.address().replace(/\./g, '')));
+    var data = {
+        id: keeper.id,
+        name: keeper.name,
+        level: keeper.level
+    };
+    res.send(JSON.stringify(data));
 });
 
 app.listen(3000, () => {
