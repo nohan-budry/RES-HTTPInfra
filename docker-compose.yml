@@ -18,10 +18,8 @@ services:
     adventurers-api:
         build: ./docker-images/express-dynamic
         labels:
-            traefik.frontend.rule: Host:res.ch;Path:/api/adventurers,/api/adventurers/{id:[0-9]+};PathPrefixStrip:/api
+            traefik.frontend.rule: >-
+                Host:res.ch;
+                Path:/api/adventurers,/api/adventurers/{id:[0-9]+},/api/keeper;
+                PathPrefixStrip:/api
             traefik.port: 3000
-
-    whoami:
-        image: containous/whoami
-        labels:
-            traefik.frontend.rule: Host:whoami.res.ch
