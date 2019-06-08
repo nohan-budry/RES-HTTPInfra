@@ -14,6 +14,8 @@ services:
         build: ./docker-images/apache-php-image
         labels:
             traefik.frontend.rule: Host:res.ch
+            traefik.backend.loadbalancer.stickiness: true
+            traefik.backend.loadbalancer.stickiness.cookieName: STICKY
 
     adventurers-api:
         build: ./docker-images/express-dynamic
