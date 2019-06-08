@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+    reverse-proxy:
+        image: traefik # The official Traefik docker image
+        command: --api --docker # Enables the web UI and tells Traefik to listen to docker
+        ports:
+            - 80:80 # The HTTP port
+            - 8080:8080 # The Web UI (enabled by --api)
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+
+    apache-static:
+        build: ./docker-images/apache-php-image
+        labels:
+            traefik.frontend.rule: Host:res.ch
+
+    adventurers-api:
+        build: ./docker-images/express-dynamic
+        labels:
+            traefik.frontend.rule: Host:res.ch;Path:/api/adventurers,/api/adventurers/{id:[0-9]+};PathPrefixStrip:/api
+            traefik.port: 3000
+
+    whoami:
+        image: containous/whoami
+        labels:
+            traefik.frontend.rule: Host:whoami.res.ch
