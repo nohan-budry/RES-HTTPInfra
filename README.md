@@ -95,7 +95,7 @@ The tree first additional steps proposed were accomplished using Traefik. [Traef
 
 ### Dynamic cluster managment
 
-With traefik and Docker compose, we can easily setup a dynamic cluster. All we need is a "docker-compose.yml" file and comfigure it properly in order to start a Traefik container and other containers that Traefik will manage. In the compose.yml file for each services we need to add a set of labels so that Traefik knows what to do. Fo example, we can set the host or the port used for requests.
+With traefik and Docker compose, we can easily setup a dynamic cluster. All we need is a "docker-compose.yml" file and comfigure it properly in order to start a Traefik container and other containers that Traefik will manage. In the compose.yml file for each services we need to add a set of labels so that Traefik knows what to do. For example, we can set the host or the port used for requests.
 
 Traefik needs the ports 80 and 8080 to be exposed. The port 80 is used for any request to the setup services. The port 8080 is used to acces the Traefik dashboard where we have useful infomations like the running containers and their configuration.
 
