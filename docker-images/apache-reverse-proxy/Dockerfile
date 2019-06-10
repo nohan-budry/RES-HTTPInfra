@@ -1,7 +1,7 @@
 FROM php:7.2-apache
 
-RUN apt-get update && \
-	apt-get install -y vim
+# Uncomment the next line to automatically install vim in the image.
+# RUN apt-get update && apt-get install -y vim
 
 COPY setup.sh /var/apache2/
 COPY templates/ /var/apache2/

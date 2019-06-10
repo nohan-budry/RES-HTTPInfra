@@ -3,6 +3,7 @@ version: '3'
 services:
     reverse-proxy:
         image: traefik # The official Traefik docker image
+        container_name: reverse-proxy
         command: --api --docker # Enables the web UI and tells Traefik to listen to docker
         ports:
             - 80:80 # The HTTP port
@@ -11,17 +12,36 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
 
     apache-static:
+        image: res/apache-static
         build: ./docker-images/apache-php-image
+        container_name: apache-static
         labels:
             traefik.frontend.rule: Host:res.ch
             traefik.backend.loadbalancer.stickiness: true
             traefik.backend.loadbalancer.stickiness.cookieName: STICKY
 
     adventurers-api:
+        image: res/adventurers_api
         build: ./docker-images/express-dynamic
+        container_name: adventurers-api
         labels:
             traefik.frontend.rule: >-
                 Host:res.ch;
                 Path:/api/adventurers,/api/adventurers/{id:[0-9]+},/api/keeper;
                 PathPrefixStrip:/api
             traefik.port: 3000
+
+    portainer:
+        image: portainer/portainer
+        container_name: portainer
+        command: -H unix:///var/run/docker.sock
+        restart: always
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - portainer_data:/data
+        labels:
+            traefik.frontend.rule: Host:portainer.res.ch
+            traefik.port: 9000
+
+volumes:
+    portainer_data:
