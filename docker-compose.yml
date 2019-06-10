@@ -14,7 +14,6 @@ services:
     apache-static:
         image: res/apache-static
         build: ./docker-images/apache-php-image
-        container_name: apache-static
         labels:
             traefik.frontend.rule: Host:res.ch
             traefik.backend.loadbalancer.stickiness: true
@@ -23,7 +22,6 @@ services:
     adventurers-api:
         image: res/adventurers_api
         build: ./docker-images/express-dynamic
-        container_name: adventurers-api
         labels:
             traefik.frontend.rule: >-
                 Host:res.ch;
