@@ -28,3 +28,12 @@ In order to enable the navigator to send the request we need to modify our DNS c
 ## Stage 4
 
 The objective of this stage was to use JQuery in order to make an AJAX request. We've added a custom script to index.js named adventurers.js located at _docker-images/apache-php-images/content/js_ that loads the adventurer's name and lvl's into an element from the html page, this function is executed periodically each two seconds (we've modify the index.js file by adding an _id_ in order to target the right header).
+
+
+
+## Stage 5
+
+The objective of this stage was to remove the hard-coded IP adresses inside the reverse proxy configuration. In order to achive this, we've modified the Dockerfile form *apache-reverse-proxy* making it possible to run a php file that will wirte the configuration file of the server. Need to take into account, that to be able to set the enviroment variables when starting a docker container we have to add *-e* . The environment variables are *STATIC_APP* and *DYNAMIC_APP*.
+
+
+
