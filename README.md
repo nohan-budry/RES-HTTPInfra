@@ -21,13 +21,11 @@ We created two endpoints to get data from:
 
 ## Stage 3
 
-The objective of this stage was to create a reverse proxy in order to have a unique entry point for the infrastucture. We've created a new folder named _apache-reverse-proxy_ inside _docker-images_ that contains a Dockerfile (in order to build an image) and _config_ folder containing the reverse proxy configuration (contains the path to the different containers, need to take into account that the ip adress needs to be the same as the docker containers from apache static and dynamic servers).
-
-In order to enable the navigator to send the request we need to modify our DNS configuration by adding to the file "hosts" the ip adress and the host name (demo.res.ch).
+The objective of this stage was to create a reverse proxy in order to have a unique entry point for the infrastucture. We've created a new folder named _apache-reverse-proxy_ inside _docker-images_ that contains a Dockerfile (in order to build an image) and _config_ folder containing the reverse proxy configuration (contains the path to the different containers). Need to take into account that the ip adress needs to be the same as the docker containers from apache static and dynamic servers).
 
 ## Stage 4
 
-The objective of this stage was to use JQuery in order to make an AJAX request. We've added a custom script to *index.html* named *adventurers.js* located at _docker-images/apache-php-images/content/js_ that loads the adventurer's name and lvl's into an element from the html page, this function is executed periodically each two seconds (we've modify the index.html file by adding an _id_ to an h2 to easily edit its content).
+The objective of this stage was to use JQuery in order to make an AJAX request. We've added a custom script to *index.html* named *adventurers.js* located at _docker-images/apache-php-images/content/js_ that loads the adventurer's name and level's into an element from the html page, this function is executed periodically each two seconds (we've modify the index.html file by adding an _id_ to an h2 element in order to easily edit its content).
 
 ## Stage 5
 
@@ -68,14 +66,14 @@ docker inspect apache-static | grep -i ipaddress
 docker inspect adventurers-api | grep -i ipaddress
 ```
 
-The output should look like that.
+The output of each command should look like that.
 
 ![Docker Inspect Result](./images/docker-inspect-result.png)
 
-In this case, the IP address of the *apache-static* container is "172.17.0.2". To run the reverse proxy we need to expose a port (the example use 8080 but you can chose whatever) and tell docker to set two environment variables.
+In this case, the IP address of the *apache-static* container is "172.17.0.2". To run the reverse proxy we also. need to expose a port (the example use 8080 but you can chose whatever) and tell docker to set two environment variables.
 
-- STATIC_APP: Contains the IP pf the *apache-static* container.
-- DYNAMIC_APP: Contains the IP pf the *adventurers-api* container.
+- STATIC_APP: Contains the IP of the *apache-static* container.
+- DYNAMIC_APP: Contains the IP of the *adventurers-api* container.
 
 Here is the command:
 
@@ -85,25 +83,25 @@ docker run -d -p 8080:80 \
 	--name reverse-proxy res/reverse-proxy
 ```
 
-You need to change the two IP adresses to what you had with docker inspect.
+You need to change the two IP adresses to what you got with docker inspect.
 
-In the default config of the proxy, only request with the host demo.res.ch are accepted. So we need to register it in our hosts list for our browsers to recognise them. For UNIX systems, modify the file "/etc/hosts" and add a line with "127.0.0.1 demo.res.ch" The IP adress corresponds to the one your docker daemon uses and you may to change it depending of your docker configuration (for example to "192.168.99.100" for a default docker-machine setup).
+In the default configuration of the proxy, only request with the host demo.res.ch are accepted. So we need to register it in our hosts list for our browsers to recognise it. For UNIX systems, modify the file "/etc/hosts" and add a line with "127.0.0.1 demo.res.ch". The IP adress corresponds to the one your docker daemon uses and may be different depending on your docker configuration (for example: "192.168.99.100" for a default docker-machine setup).
 
 In your browser, you may now go to "http://demo.res.ch:8080" to see the apache static app or to "http://demo.res.ch:8080/api/adventurers" for the adventurers api.
 
 ## Additional steps
 
-The tree first additional steps proposed were accomplished using Traefik. [Traefik](https://traefik.io) is a dynamic proxy / load balancers that we used for replace our simple reverse proxy. We have been able to easily use multiple containers of the apache static and the adventurers API apps with load balancing and sticky sessions. Because it is dynamic, it detects automatically when containers are started or stoped. Also, we use [Docker- Compose](https://docs.docker.com/compose/) to configure Traefik and scale the number of running containers (or services as called in docker compose). The last additional step was accomplish using [Portainer](https://www.portainer.io).
+The tree first additional steps proposed were accomplished using Traefik. [Traefik](https://traefik.io) is a dynamic reverse proxy / load balancer that we used to replace our simple reverse proxy. We have been able to easily use multiple containers of the apache static and the adventurers API apps with load balancing and sticky sessions. Because it is dynamic, it detects automatically when containers are started or stoped. Also, we use [Docker- Compose](https://docs.docker.com/compose/) to configure Traefik and scale the number of running containers (or services as called in docker compose). The last additional step was accomplish using [Portainer](https://www.portainer.io).
 
 ### Dynamic cluster managment
 
 With traefik and Docker compose, we can easily setup a dynamic cluster. All we need is a "docker-compose.yml" file and comfigure it properly in order to start a Traefik container and other containers that Traefik will manage. In the compose.yml file for each services we need to add a set of labels so that Traefik knows what to do. Fo example, we can set the host or the port used for requests.
 
-By default, traefik need the ports 80 and 8080 to be expose. The port 80 is used for any request to the setup services. The port 8080 is used to acces the Traefik dashboard where we have useful infomations like the running containers and its configs.
+Traefik needs the ports 80 and 8080 to be exposed. The port 80 is used for any request to the setup services. The port 8080 is used to acces the Traefik dashboard where we have useful infomations like the running containers and their configuration.
 
 ### Load balancing with round robin
 
-When we run multiple services, Traefik uses a load balancing with a weighted round robin algorithm by default. To demonstrate the load balancing, we added a new endpoint to our api. A request to "/keeper", show the imfomation of what we call the server keeper. In fact it is just the adventurers with its id corresponding to the container IP adress (with the dots removed, so 172.17.0.2 is 1721702). In other words, this endpoint always returns the same adventurer for each different server. When everything is running, you can go to "res.ch/api/keeper" and every time you refresh the page, an other keeper will be shown. And if you look carefully, you may see round robin in action.
+When we run multiple services, Traefik uses a load balancing with a weighted round robin algorithm by default. To demonstrate the load balancing, we added a new endpoint to our API. A request to "/keeper", shows the imfomation of what we call the server keeper. In fact it is just an adventurer with its id corresponding to the container IP adress (with the dots removed, so 172.17.0.2 is 1721702). In other words, this endpoint always returns the same adventurer for each different server. When everything is running, you can go to "http://res.ch/api/keeper" and every time you refresh the page, an other keeper will be shown. And if you look carefully, you may see round robin in action.
 
 ### Load balancing with sticky sessions
 
@@ -111,11 +109,11 @@ We enabled sticky sessions on the apache static app with two simple Traefik labe
 
 ### Management UI
 
-To create a wep app that allow to start and stop containers, we use Portainer. We were able to configure it and add it to the docker-compose file. So we are able to see running containers, stop them or duplicate existing ones, but we did not find a way to interact with docker compose to easily scale services.
+To create a web app that allows to start and stop containers, we used Portainer. We configured it by adding it to the "docker-compose.yml" file. This lets us see running containers, stop them or duplicate existing ones.
 
 ### Usage
 
-> **Note**: The commands are executed at the root of the project folder.
+> **Note**: This command is executed at the root of the project folder.
 
 With the additionnal steps, we can achieve a similar setup as before by only using one command.
 
@@ -123,10 +121,10 @@ With the additionnal steps, we can achieve a similar setup as before by only usi
 docker-compose up -d --scale apache-static=3 --scale adventurers-api=3
 ```
 
-This command start every services decribed by the file "docker-compose.yml". The flag **-d** is for detached mode. **—scale** lets us chose how many container for the specified service should run. You can edit the numbers as you like to have less or more of them.
+This command start every services decribed by the "docker-compose.yml" file. The flag **-d** is for detached mode. **--scale** lets us chose how many containers for the specified service should run. You can edit the numbers as you like to have more or less of them.
 
-You now have access to "http://res.ch/" for the apache static app, to "http://res.ch/api/" for the adventurers API app, to "http://res.ch:8080/" for Treafik dashboard and "Http://portainer.res.ch/" for the Portainer dashboard.
+You now have access to "http://res.ch/" for the apache static app, to "http://res.ch/api/" for the adventurers API, to "http://res.ch:8080/" for Treafik dashboard and to "http://portainer.res.ch/" for the Portainer dashboard. Remember to add those hosts in your system like we did with demo.res.ch after step 5.
 
-If you access the apache static app, you can see that the server keeper doesn't change (cookies should be enabled) which mean the sticky sessions are working. You can also look at the cookie list to see "STICKY" with the container's ip as the value. If you delete it an other one will be create with the same container's IP or one of the others' IP.
+If you access the apache static app, you can see that the server keeper doesn't change (cookies should be enabled) which mean the sticky sessions are working. You can also look at the cookie list to see "STICKY" with the container's UP as the value. If you delete it an other one will be create with the same container's IP or one of the others' IP.
 
 If you go to "http://res.ch/api/keeper" you can see round robin in action.
