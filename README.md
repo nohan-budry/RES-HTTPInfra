@@ -6,7 +6,7 @@ This rapport contains the different stages of the lab HTTP infra executed during
 
 ## Stage 1
 
-During this first stage, we've created a new folder named docker-images that contains the whole structure of the lab. Inside this folder we've created another folder named apache-php-image. Inside this folder we can find everything that we need in order to build a docker image of an httpd server (created from a docker image php:7.2-apache) with static http content (the content is located at the "content" folder).
+During this first stage, we've created a new folder named docker-images that contains the whole structure of the lab. Inside this folder we've created another folder named apache-php-image. Inside this folder we can find everything that we need in order to build a docker image of an https server (created from a docker image php:7.2-apache) with static http content (the content is located at the "content" folder).
 
 Inside _docker-images/apache-php-image/content_ we've added a framework bootstrap, in order to add a template. The template added comes from [START-BOOTSTRAP](https://startbootstrap.com/themes/grayscale/) and goes by the name of "_Greyscale_". (This template is not the same as the webcast).
 
